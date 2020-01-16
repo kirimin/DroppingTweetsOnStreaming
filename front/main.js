@@ -1,4 +1,18 @@
 (function () {
+
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * Math.floor(max));
+    }
+
+    let bodyArray = [];
+    function addListAndremoveOld(world, body){
+        bodyArray.push(body);
+        if (bodyArray.length >= 20) {
+            Matter.World.remove(world, bodyArray[0]);
+            bodyArray.shift();
+        }
+    }
+
     // create matter engine
     function createEngine(parentNode) {
         const Engine = Matter.Engine;
@@ -11,14 +25,14 @@
                 options: {
                     wireframes: false,
                     background: 'green',
-                    height: 1020,
+                    height: 1000,
                     width: 1980,
                 }
             }
         });
 
         // Create ground and wall
-        let ground = Bodies.rectangle(0, 1080, 1920, 60, { isStatic: true });
+        let ground = Bodies.rectangle(1000, 1000, 1980, 60, { isStatic: true });
         World.add(engine.world, [ground]);
 
         let mouseConstraint = MouseConstraint.create(engine);
@@ -26,11 +40,6 @@
 
         Engine.run(engine);
         return engine;
-    }
-
-    // split emoji string
-    function stringToArray(str) {
-        return str.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[^\uD800-\uDFFF]/g) || [];
     }
 
     function createTexture(sourceCanvas, bounds) {
@@ -137,35 +146,40 @@
         });
 
         Matter.World.add(engine.world, wordBody);
+        addListAndremoveOld(engine.world, wordBody);
     }
 
     let engine = createEngine(document.getElementById('world'));
-    document.getElementById('world').addEventListener('click', () => {
-        const initialBodiesLength = engine.world.bodies.length;
-        addToWorld(engine, 'きりみんちゃん', 500);
-        addToWorld(engine, 'みんみん', 800);
-        addToWorld(engine, '💮', 1000);
-        for(let i = 0; i < 10; i++) {
-            addToWorld(engine, '(⁎˃ᴗ˂⁎)', 410 + 1 * 50);
-        }
-    });
-
-    const userId = "kirimin";
-    fetch(`https://api.twitter.com/1.1/search/tweets.json?q=from%3Atwitterdev&result_type=mixed&count=2`, {
-        mode: "cors",
-        headers: {
-            authorization: "",
-            oauth_consumer_key: "",
-        },
-        oauth_signature_method:"HMAC-SHA1", 
-        // oauth_timestamp="generated-timestamp", 
-        oauth_token:"", 
-        oauth_version:"1.0"
-    })
-    .then(response => {
-        console.log(response.status); // => 200
-        return response.json().then(userInfo => {
-            console.log(userInfo); // => {...}
-        });
-    });
+    let maxId = "0000000"
+    setInterval(function() {
+        fetch('https://us-central1-droppingtweetsonstreaming.cloudfunctions.net/searchTweets', {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+            },
+            body: JSON.stringify({ "data" : { 
+                    "text": `#%E3%81%8D%E3%82%8A%E3%81%BF%E3%82%93%E3%81%A1%E3%82%83%E3%82%93%E3%81%AD%E3%82%8B -RT -https since_id:${maxId}"`,
+                    "bearer": `${token.bearer_token}`
+                }
+            })
+        })
+        .then(res=>res.json())
+        .then(function(response) {
+            maxId = response.result.max_id.toString()
+            maxId = maxId.substring(0, 5) + (parseInt(maxId.substr(5)) + 100).toString()
+            console.log(response.result)
+            response.result.tweets.forEach(element => {
+                setTimeout(
+                    function () {
+                        addToWorld(engine, element, getRandomInt(1980));
+                        addToWorld(engine, '💮', getRandomInt(1980));
+                        addToWorld(engine, '🍣', getRandomInt(1980));
+                        addToWorld(engine, '📛', getRandomInt(1980));
+                    },
+                    3000
+                );
+            });
+        }).catch(error => console.error('Error:', error));
+    }, 20000);
 })();
