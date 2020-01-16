@@ -13,7 +13,7 @@ exports.searchTweets = functions.https.onCall(async (data, context) => {
         },
         qs: {
           q: text,
-          count: 5,
+          count: 10,
           since: new Date().toFormat("YYYY-MM-DD"),
         },
         json: true

@@ -1,7 +1,7 @@
 (function () {
 
-    function getRandomInt(max) {
-        return Math.floor(Math.random() * Math.floor(max));
+    function getRandomInt(min, max) {
+        return Math.floor(min + Math.random() * Math.floor(max - min));
     }
 
     let bodyArray = [];
@@ -13,7 +13,6 @@
         }
     }
 
-    // create matter engine
     function createEngine(parentNode) {
         const Engine = Matter.Engine;
         const World = Matter.World;
@@ -31,7 +30,7 @@
             }
         });
 
-        // Create ground and wall
+        // Create ground
         let ground = Bodies.rectangle(1000, 1000, 1980, 60, { isStatic: true });
         World.add(engine.world, [ground]);
 
@@ -64,14 +63,14 @@
 
     function createWordInfo(word) {
         let canvas = document.createElement('canvas');
-        canvas.width = 50 * word.length;
-        canvas.height = 50;
+        canvas.width = 80 * word.length;
+        canvas.height = 100;
         let context = canvas.getContext('2d');
 
         // draw text
         context.fillStyle = 'black';
-        context.font = '40px sans-serif';
-        context.fillText(word, 10, 40);
+        context.font = '80px sans-serif';
+        context.fillText(word, 10, 90);
 
         let source = cv.imread(canvas);
         alphaToWhite(source.data);
@@ -172,10 +171,10 @@
             response.result.tweets.forEach(element => {
                 setTimeout(
                     function () {
-                        addToWorld(engine, element, getRandomInt(1980));
-                        addToWorld(engine, '💮', getRandomInt(1980));
-                        addToWorld(engine, '🍣', getRandomInt(1980));
-                        addToWorld(engine, '📛', getRandomInt(1980));
+                        addToWorld(engine, element, getRandomInt(800, 1400));
+                        addToWorld(engine, '💮', getRandomInt(0, 1980));
+                        addToWorld(engine, '🍣', getRandomInt(0, 1980));
+                        addToWorld(engine, '📛', getRandomInt(0, 1980));
                     },
                     3000
                 );
