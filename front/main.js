@@ -166,7 +166,7 @@
         .then(res=>res.json())
         .then(function(response) {
             maxId = response.result.max_id.toString()
-            maxId = maxId.substring(0, 5) + (parseInt(maxId.substr(5)) + 100).toString()
+            maxId = maxId.substring(0, 14) + (parseInt(maxId.substr(14)) + 1).toString()
             console.log(response.result)
             response.result.tweets.forEach(element => {
                 setTimeout(
