@@ -69,8 +69,8 @@
 
         // draw text
         context.fillStyle = 'black';
-        context.font = '80px sans-serif';
-        context.fillText(word, 10, 90);
+        context.font = '60px sans-serif';
+        context.fillText(word, 10, 70);
 
         let source = cv.imread(canvas);
         alphaToWhite(source.data);
@@ -151,6 +151,7 @@
     let engine = createEngine(document.getElementById('world'));
     let maxId = "0000000"
     setInterval(function() {
+        console.log("since_id:" + maxId)
         fetch('https://us-central1-droppingtweetsonstreaming.cloudfunctions.net/searchTweets', {
             method: "POST",
             mode: "cors",
@@ -169,16 +170,11 @@
             maxId = maxId.substring(0, 14) + (parseInt(maxId.substr(14)) + 1).toString()
             console.log(response.result)
             response.result.tweets.forEach(element => {
-                setTimeout(
-                    function () {
-                        addToWorld(engine, element, getRandomInt(800, 1400));
-                        addToWorld(engine, '💮', getRandomInt(0, 1980));
-                        addToWorld(engine, '🍣', getRandomInt(0, 1980));
-                        addToWorld(engine, '📛', getRandomInt(0, 1980));
-                    },
-                    3000
-                );
+                addToWorld(engine, element, getRandomInt(800, 1400));
+                addToWorld(engine, '💮', getRandomInt(0, 1980));
+                addToWorld(engine, '🍣', getRandomInt(0, 1980));
+                addToWorld(engine, '📛', getRandomInt(0, 1980));
             });
         }).catch(error => console.error('Error:', error));
-    }, 20000);
+    }, 30000);
 })();
