@@ -151,7 +151,6 @@
     let engine = createEngine(document.getElementById('world'));
     let maxId = "0000000"
     setInterval(function() {
-        console.log("since_id:" + maxId)
         fetch('https://us-central1-droppingtweetsonstreaming.cloudfunctions.net/searchTweets', {
             method: "POST",
             mode: "cors",
@@ -159,15 +158,15 @@
                 "Content-Type": "application/json; charset=utf-8",
             },
             body: JSON.stringify({ "data" : { 
-                    "text": `#%E3%81%8D%E3%82%8A%E3%81%BF%E3%82%93%E3%81%A1%E3%82%83%E3%82%93%E3%81%AD%E3%82%8B -RT -https since_id:${maxId}"`,
-                    "bearer": `${token.bearer_token}`
+                    "text": `#%E3%81%8D%E3%82%8A%E3%81%BF%E3%82%93%E3%81%A1%E3%82%83%E3%82%93%E3%81%AD%E3%82%8B -RT -https`,
+                    "bearer": `${token.bearer_token}`,
+                    "since_id": `${maxId}`
                 }
             })
         })
         .then(res=>res.json())
         .then(function(response) {
-            maxId = response.result.max_id.toString()
-            maxId = maxId.substring(0, 14) + (parseInt(maxId.substr(14)) + 1).toString()
+            maxId = response.result.max_id
             console.log(response.result)
             response.result.tweets.forEach(element => {
                 addToWorld(engine, element, getRandomInt(800, 1400));
