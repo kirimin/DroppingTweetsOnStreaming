@@ -149,7 +149,7 @@
     }
 
     function start() {
-        let engine = createEngine(document.getElementById('world'));
+        document.getElementById('start').style.display = "none"
         let maxId = "0000000"
         setInterval(function() {
             fetch('https://us-central1-droppingtweetsonstreaming.cloudfunctions.net/searchTweets', {
@@ -178,6 +178,7 @@
             }).catch(error => console.error('Error:', error));
         }, 30000);
     }
-    start();
 
+    let engine = createEngine(document.getElementById('world'));
+    document.getElementById('start').addEventListener("click", start)
 })();
