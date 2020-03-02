@@ -68,7 +68,7 @@
         let context = canvas.getContext('2d');
 
         // draw text
-        context.fillStyle = "rgb(250, 250, 250)";
+        context.fillStyle = "rgb(255, 50, 50)";
         context.font = '60px sans-serif';
         context.fillText(word, 10, 70);
 
@@ -159,7 +159,7 @@
                     "Content-Type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({ "data" : { 
-                        "text": `#%E3%81%8D%E3%82%8A%E3%81%BF%E3%82%93%E3%81%A1%E3%82%83%E3%82%93%E3%81%AD%E3%82%8B -RT -https`,
+                        "text": `#%E3%81%8D%E3%82%8A%E3%81%BF%E3%82%93%E3%81%A1%E3%82%83%E3%82%93%E3%81%AD%E3%82%8B -RT -https -http`,
                         "bearer": `${token.bearer_token}`,
                         "since_id": `${maxId}`
                     }
@@ -170,10 +170,25 @@
                 maxId = response.result.max_id
                 console.log(response.result)
                 response.result.tweets.forEach(element => {
-                    addToWorld(engine, element, getRandomInt(800, 1400));
+                    const tweetText = element.text.replace("#きりみんちゃんねる", "")
+                    const screenName = element.user.screen_name
+                    addToWorld(engine, tweetText, getRandomInt(800, 1400));
                     addToWorld(engine, '💮', getRandomInt(0, 1800));
                     addToWorld(engine, '🍣', getRandomInt(0, 1800));
                     addToWorld(engine, '📛', getRandomInt(0, 1800));
+                    fetch('https://us-central1-droppingtweetsonstreaming.cloudfunctions.net/postToChat', {
+                        method: "POST",
+                        mode: "cors",
+                        headers: {
+                            "Content-Type": "application/json; charset=utf-8",
+                        },
+                        body: JSON.stringify({ "data" : { 
+                                "credentials": CREDENTIALS,
+                                "token": YOUTUBE_TOKEN,
+                                "message": "[#きりみんちゃんねる] " + tweetText + " by " + screenName
+                            }
+                        })
+                    })
                 });
             }).catch(error => console.error('Error:', error));
         }, 30000);
